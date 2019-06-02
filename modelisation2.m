@@ -1,11 +1,11 @@
 %% PRV 2D: 
 
 % parametre des equations
-beta = 1;
-D = 1;
+beta = 0.1;
+D = 2;
 
 % parametres de simulation, espace
-s = 100; % taille domaine (carre sxs)
+s = 10; % taille domaine (carre sxs)
 h = 1;
 x0 = 0;
 x1 = s;
@@ -92,23 +92,29 @@ L(coinbasdroit,coinbasdroit-J*(J-1)) = 1;
 L(coinbasdroit,coinbasdroit-J) = 1;
 
 % condition initiales
-P(10,50) = 100;
-R(75, 10) = 100;
-V(75,90) = 100;
+P(1,5) = 100;
+R(7,1) = 100;
+V(7,9) = 100;
+
+%P = randi(2,J,J);
+%R = randi(2,J,J);
+%V = randi(2,J,J);
+
 
 
 % parametres de simulation, temps
 t0 = 0;
-tfinal = 100; 
+tfinal = 50; 
 t = t0;
 % k doit etre < a h^2/2/d/D ou dim d = 2
 k = min(1,0.2*( h^2/4/max(D)));
+
  
 
 figure(1); clf;
-surf(X,Y,P,'EdgeColor','none');% hold on;
-%surf(X,Y,R,'EdgeColor','none'); hold on;
-%surf(X,Y,V,'EdgeColor','none');
+surf(X,Y,P,'EdgeColor','none'); hold on
+surf(X,Y,R,'EdgeColor','none'); hold on
+surf(X,Y,V,'EdgeColor','none'); hold off
 view(2)
 drawnow;
 tk = 0;
@@ -118,17 +124,19 @@ pause
 % BOUCLE PRINCIPALE
 while t < tfinal
     drawnow;
-    newP = -beta*P*R+beta*V*P+reshape((D*k/h^2)*L*reshape(P,J2,1),J,J);
-    newR = -beta*R*V+beta*P*R+reshape((D*k/h^2)*L*reshape(R,J2,1),J,J);
-    newV = -beta*P*V+beta*R*V+reshape((D*k/h^2)*L*reshape(V,J2,1),J,J);
+    newP = -beta*P.*R+beta*V.*P+reshape((D*k/h^2)*L*reshape(P,J2,1),J,J);
+    newR = -beta*R.*V+beta*P.*R+reshape((D*k/h^2)*L*reshape(R,J2,1),J,J);
+    newV = -beta*V.*P+beta*R.*V+reshape((D*k/h^2)*L*reshape(V,J2,1),J,J);
+    
     P = newP;
     R = newR;
     V = newV;
     if tk > 1 
         t
-        surf(X,Y,P,'EdgeColor','none');% hold on;
-        %surf(X,Y,R,'EdgeColor','none'); hold on;
-        %surf(X,Y,V,'EdgeColor','none');
+        P
+        surf(X,Y,P,'EdgeColor','none'); hold on
+        surf(X,Y,R,'EdgeColor','none'); hold on
+        surf(X,Y,V,'EdgeColor','none'); hold off
         view(2)
         drawnow;
         tk = 0;
